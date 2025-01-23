@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.13
+    container_name: es
+    environment:
+      - discovery.type=single-node
+    networks:
+      - foodtrucks-net
+    ports:
+      - "9200:9200"
+
+  flask-app:
+    image: foodtrucks-flask-app-light
+    container_name: flask-app
+    depends_on:
+      - es
+    networks:
+      - foodtrucks-net
+    ports:
+      - "5000:5000"
+    environment:
+      - DEBUG=true
+
+networks:
+  foodtrucks-net:
+    driver: bridge
+
