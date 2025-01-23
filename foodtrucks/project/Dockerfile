@@ -17,12 +17,16 @@ COPY flask-app /app/
 # Install Python dependencies
 RUN pip install --prefix=/install --no-cache-dir -r requirements.txt
 
+# Copy static files to the host
+RUN cp -r /app/static /static && cp -r /app/templates /templates
+
 # Stage 2: Production Stage
 FROM python:2.7-alpine
 
 # Copy only the installed dependencies and application code
 COPY --from=builder /install /usr/local
 COPY flask-app /app
+RUN rm -r /app/static /app/templates
 
 # Set the working directory
 WORKDIR /app

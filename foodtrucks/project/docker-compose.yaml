@@ -1,15 +1,15 @@
 version: '3.8'
 
 services:
-  nginx:
+  nginx-proxy:
     image: nginx:latest
     container_name: nginx-proxy
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - flask-app
+      - ./flask-app/static:/usr/share/nginx/html/static
+      - ./flask-app/templates:/usr/share/nginx/html/templates
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     networks:
       - foodtrucks-net
 
@@ -24,7 +24,8 @@ services:
       - "9200:9200"
 
   flask-app:
-    image: foodtrucks-flask-app-light
+    build:
+      context: .
     container_name: flask-app
     depends_on:
       - es
